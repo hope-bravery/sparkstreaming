@@ -1,0 +1,2 @@
+# sparkstreaming_exactlyonce
+SparkStreaming_Kafka_MySQL实现Exactly-Once
