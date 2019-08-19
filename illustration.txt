@@ -1,0 +1,17 @@
+#1.MySQL offset表创建语句
+create table kafka_offset(
+    topic varchar(200),
+    partition int,
+    offset int
+)ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+#2.MySQL error_log表创建语句
+create table error_log(
+    log_time varchar(200),
+    log_count int
+)ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+#3.Kafka发送日志格式为
+2017-07-30 14:09:08 ERROR some message
+2017-07-30 14:09:20 INFO some message
+2017-07-30 14:10:50 ERROR some message
