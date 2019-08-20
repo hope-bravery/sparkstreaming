@@ -13,7 +13,7 @@ import org.apache.spark.rdd.RDD
   * Date:2019/8/20 4:37
   * Description:日志解析
   **/
-class ParseLog {
+object ParseLog extends Serializable {
     def processLogs(message: RDD[ConsumerRecord[String, String]]): RDD[(LocalDateTime, Int)] = {
         message.map(_.value)
                 .flatMap(parseLog)
