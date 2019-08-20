@@ -16,7 +16,7 @@ import scalikejdbc._
 /**
   * User:xr
   * Date:2019/8/20 2:54
-  * Description:事务写入
+  * Description:事务输出
   * 输入:Kafka
   * 处理:SparkStreaming
   * 输出:MySQL
