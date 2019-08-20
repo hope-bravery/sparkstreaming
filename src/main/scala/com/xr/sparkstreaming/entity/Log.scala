@@ -8,4 +8,4 @@ import java.time.LocalDateTime
   * Description:日志样例类
   **/
 
-case class Log(time: LocalDateTime, level: String)
+case class Log(time: LocalDateTime, level: String) extends Serializable
