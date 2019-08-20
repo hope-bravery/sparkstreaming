@@ -7,7 +7,7 @@ create table kafka_offset(
 
 #2.MySQL error_log表创建语句
 create table error_log(
-    log_time varchar(200),
+    log_time varchar(200) primary key,
     log_count int
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
