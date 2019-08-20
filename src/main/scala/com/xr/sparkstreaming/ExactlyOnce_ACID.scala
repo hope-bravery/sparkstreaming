@@ -26,7 +26,7 @@ import scalikejdbc._
   * 3.事务输出:结果存储与Offset提交在Driver端同一MySQL事务中.
   **/
 
-object ExactlyOnce_ACID extends ParseLog with Config {
+object ExactlyOnce_ACID extends Config {
     def main(args: Array[String]): Unit = {
         val brokers = config.getString("exactly-once.acid.brokers")
         val topic = config.getString("exactly-once.acid.topic")
@@ -45,7 +45,7 @@ object ExactlyOnce_ACID extends ParseLog with Config {
         //在Driver端创建数据库连接池
         ConnectionPool.singleton("jdbc:mysql://spark03:3306/spark", "root", "root")
 
-        val conf = new SparkConf().setAppName("Exactly-Once-ACID").setMaster("spark://spark01:7077,spark02:7077")
+        val conf = new SparkConf().setAppName("Exactly-Once-ACID").setMaster("local")
         val ssc = new StreamingContext(conf, Seconds(5))
 
         val fromOffsets: Map[TopicPartition, Long] = DB.readOnly { implicit session =>
@@ -63,7 +63,7 @@ object ExactlyOnce_ACID extends ParseLog with Config {
 
         messages.foreachRDD { rdd =>
             val offsetRanges = rdd.asInstanceOf[HasOffsetRanges].offsetRanges
-            val result: Array[(LocalDateTime, Int)] = processLogs(rdd).collect()
+            val result: Array[(LocalDateTime, Int)] = ParseLog.processLogs(rdd).collect()
 
             DB.localTx { implicit session =>
                 result.foreach { case (time, count) =>
@@ -75,10 +75,13 @@ object ExactlyOnce_ACID extends ParseLog with Config {
                 }
 
                 offsetRanges.foreach { offsetRange =>
-                    sql"""
-                          insert ignore into kafka_offset(topic, `partition`, offset)
-                          value(${topic}, ${offsetRange.partition}, ${offsetRange.fromOffset})
-                       """.update().apply()
+
+                    /**
+                      * sql"""
+                      * insert ignore into kafka_offset(topic, `partition`, offset)
+                      * value(${topic}, ${offsetRange.partition}, ${offsetRange.fromOffset})
+                      * """.update().apply()
+                      */
 
                     val affectedRows =
                         sql"""
@@ -87,7 +90,7 @@ object ExactlyOnce_ACID extends ParseLog with Config {
                         """.update.apply()
 
                     if (affectedRows != 1)
-                        throw new Exception("fail to update offset")
+                        throw new Exception(s"Commit kafka topic :${topic} failed!")
                 }
             }
         }
