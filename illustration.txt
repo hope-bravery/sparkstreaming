@@ -15,3 +15,8 @@ create table error_log(
 2017-07-30 14:09:08 ERROR some message
 2017-07-30 14:09:20 INFO some message
 2017-07-30 14:10:50 ERROR some message
+
+代码参考资料:
+https://blog.csdn.net/wangpei1949/article/details/89277490
+https://blog.csdn.net/qq_32252917/article/details/78827126
+https://github.com/jizhang/spark-sandbox/blob/master/src/main/scala/ExactlyOnce.scala
